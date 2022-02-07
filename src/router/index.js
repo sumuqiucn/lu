@@ -30,7 +30,8 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-// 常量路由，所有用户都能看见的放在这里面
+
+// 常量路由：所有的用户都能看到的放在这个里面
 export const constantRoutes = [
   {
     path: '/login',
@@ -50,18 +51,70 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [
       {
-      path: 'Dashboard',
-      name: '首页',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'dashboard' }
-    },
-   ]
-  },  // 404 page must be placed at the end !!! 
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: '首页', icon: 'dashboard' }
+      },
+    ]
+  },  // 404 page must be placed at the end !!!
 ]
 
-//  异步路由(动态路由)，放置的是所有需要动态设置添加的到路由器里的路由
+
+// 异步路由（动态路由）:这里面放的是所有的需要动态设置添加到路由器里面的路由
 // 后期我们会根据用户返回的routes数据，从这个数组当中过滤用户自己需要动态展示的路由
 export const allAsyncRoutes = [
+
+  //权限数据管理相关的路由
+  {
+    name: 'Acl',
+    path: '/acl',
+    component: Layout,
+    redirect: '/acl/user/list',
+    meta: { 
+      title: '权限管理', 
+      icon: 'el-icon-lock' 
+    },
+    children: [
+      {
+        name: 'User',
+        path: 'user/list',
+        component: () => import('@/views/acl/user/list'),
+        meta: { 
+          title: '用户管理', 
+        },
+      },
+      {
+        name: 'Role',
+        path: 'role/list',
+        component: () => import('@/views/acl/role/list'),
+        meta: { 
+          title: '角色管理', 
+        },
+      },
+      {
+        name: 'RoleAuth',
+        path: 'role/auth/:id',
+        component: () => import('@/views/acl/role/roleAuth'),
+        meta: {
+          activeMenu: '/acl/role/list',
+          title: '角色授权',
+        },
+        hidden: true,
+      },
+      {
+        name: 'Permission',
+        path: 'permission/list',
+        component: () => import('@/views/acl/permission/list'),
+        meta: { 
+          title: '菜单管理',
+        },
+      },
+    ]
+  },
+
+  
+  //配置商品管理相关的路由
   {
     path:'/product',
     component: Layout,
@@ -92,12 +145,41 @@ export const allAsyncRoutes = [
         component: () => import('@/views/product/sku/List'),
         name:'Sku',
         meta:{title:'Sku管理'}
+      },
+      {
+        path:'scoped/list',
+        component: () => import('@/views/product/scopedTest/List'),
+        name:'Scoped',
+        meta:{title:'Scoped管理'}
       }
     ]
   },
+  {
+    path:'/test',
+    component: Layout,
+    name:'Test',
+    meta:{title:'测试管理',icon:'el-icon-star-on'},
+    children:[
+      {
+        path:'test111/list',
+        name:'Test111',
+        meta:{title:'测试111'},
+        component:() => import('@/views/test/test111/List')
+      },
+      {
+        path:'test222/list',
+        name:'Test222',
+        meta:{title:'测试222'},
+        component:() => import('@/views/test/test222/List')
+      }
+    ]
+  }
 ]
-// 任意路由 *代表统配符所有的
-export const anyRoute =  { path: '*', redirect: '/404', hidden: true }
+
+
+// 任意路由   这个路由一定是配置在路由器当中的最后一个
+export const anyRoute = { path: '*', redirect: '/404', hidden: true }
+
 
 
 const createRouter = () => new Router({
